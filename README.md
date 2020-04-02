@@ -9,13 +9,15 @@ Some questions can be enlightened, such as:
 +	How to start a real-time acquisition?
 +	How to stop the real-time acquisition?
 
-## Recommended SDK
+## Recommended SDK and Unity Editor
 
 +	SDK Platform 27 \[*Android 8.1*]
++	Unity 2018.3.7f1
 
 ## Limitations
 
 +	**PLUX** devices from **BITalino** product line are not currently supported. 
++	Graphical User Interface is optimized for tablets.
 
 ## How to Use It
 
