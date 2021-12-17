@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -49,15 +50,22 @@ public class MainScreenManager : MonoBehaviour {
     void Start () {
         // Request permission to use location/Bluetooth communication.
         #if PLATFORM_ANDROID
-            if (!Permission.HasUserAuthorizedPermission(Permission.Microphone))
+            if (!Permission.HasUserAuthorizedPermission(Permission.CoarseLocation))
             {
-                AndroidRuntimePermissions.Permission result = AndroidRuntimePermissions.RequestPermission(Permission.CoarseLocation);
-                if (result == AndroidRuntimePermissions.Permission.Granted)
+                AndroidRuntimePermissions.RequestPermission(Permission.CoarseLocation);
+
+                // Present an informative message to the user, informing that in devices with Android >= 10 it will be necessary to
+                // navigate to the APP settings and provide the "Allow All the Time" location permission to use the Bluetooth features.
+                Debug.Log("SDK Version: " + getSDKInt());
+                if (getSDKInt() >= 29)
                 {
-                    // Ensures that the application only quits if permission was not granted.
-                    permissionGranted = true;
+                    ShowAlert("Permission Alert",
+                        "In order to use the Bluetooth features, in devices with Android 10 or higher, the user should 1) manually navigate to the APP settings; 2) access the Permissions tab and 3) change the 'Location' permission to 'Allow All Time'.");
                 }
             }
+
+            // Confirm if the permission was granted.
+            permissionGranted = Permission.HasUserAuthorizedPermission(Permission.CoarseLocation);
         #endif
 
         // Initialise interface text fields.
@@ -320,5 +328,73 @@ public class MainScreenManager : MonoBehaviour {
 
         // Update informative text.
         selectedDeviceText.text = selectedDevice;
+    }
+
+    /**
+     * <summary>Method that retrieves the Android SDK version of the device where the APP is running.</summary>
+     */
+    private int getSDKInt()
+    {
+        using (var version = new AndroidJavaClass("android.os.Build$VERSION"))
+        {
+            return version.GetStatic<int>("SDK_INT");
+        }
+    }
+
+    /**
+     * <summary>Class intended to deal with the actions triggered by the user while interacting with an Alert Dialog.</summary>
+     * <link>https://weesals.wordpress.com/2019/12/20/minimum-code-for-android-alert-dialog-box-in-unity/</link>
+     */
+    private class OnClickListener : AndroidJavaProxy
+    {
+        public readonly Action Callback;
+
+        /**
+         * <summary>Listener monitoring when the OK button of the Alert Dialog is pressed.</summary>
+         * <param name="callback">Callback triggered when the OK button of the Alert Dialog is pressed.</param>
+         */
+        public OnClickListener(Action callback) : base("android.content.DialogInterface$OnClickListener")
+        {
+            Callback = callback;
+        }
+
+        /**
+         * <summary>Method linked to the OnClick event triggered by the user after clicking the OK button in the Alert Dialog.</summary>
+         * <param name="dialog">Dialog object that gave origin to the event.</param>
+         * <param name="id">Unique identifier of the event.</param>
+         */
+        public void OnClick(AndroidJavaObject dialog, int id)
+        {
+            Callback();
+        }
+    }
+
+    /**
+     * <summary>Method that when called will generate an Alert Dialog to inform the user about a specific condition.</summary>
+     * <param name="title">Title of the Alert Dialog.</param>
+     * <param name="content">Alert message to be presented to the user.</param>
+     */
+    private void ShowAlert(string title, string content)
+    {
+        AndroidJavaObject activity = null;
+        using (var unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
+        {
+            activity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
+        }
+        activity.Call("runOnUiThread", new AndroidJavaRunnable(() => {
+            AndroidJavaObject dialog = null;
+            using (AndroidJavaObject builder = new AndroidJavaObject("android.app.AlertDialog$Builder", activity))
+            {
+                builder.Call<AndroidJavaObject>("setTitle", title).Dispose();
+                builder.Call<AndroidJavaObject>("setMessage", content).Dispose();
+                builder.Call<AndroidJavaObject>("setPositiveButton", "OK", new OnClickListener(() => {
+                    Debug.Log("Button pressed");
+                })).Dispose();
+                dialog = builder.Call<AndroidJavaObject>("create");
+            }
+            dialog.Call("show");
+            dialog.Dispose();
+            activity.Dispose();
+        }));
     }
 }
