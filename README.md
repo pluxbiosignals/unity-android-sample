@@ -1,6 +1,6 @@
 # PLUX Android/Unity API | Sample APP
 The Sample APP contained inside this repository provides a practical and intuitive resource to explore the integration of some signal acquisition devices
-commercialized by **PLUX** ([**biosignalsplux**](https://www.biosignalsplux.com/), [**biosignalsplux Solo**](http://www.biosignalsplux.com/downloads/biosignalsplux_Solo_User_Manual.pdf) and [**MuscleBAN**](http://www.biosignalsplux.com/datasheets/MuscleBAN_BE_Spec_Sheet.pdf)) in an **Android** application created through **Unity** environment.
+commercialized by **PLUX** ([**biosignalsplux**](https://www.pluxbiosignals.com/collections/biosignalsplux/products/researcher-kit), [**biosignalsplux Solo**](https://www.pluxbiosignals.com/products/solo-kit), [**muscleBAN**](https://www.pluxbiosignals.com/products/muscleban-kit) and [**cardioBAN**](https://www.pluxbiosignals.com/products/cardioban)) in an **Android** application created through **Unity** environment.
 
 Some questions can be enlightened, such as:
 
@@ -12,7 +12,7 @@ Some questions can be enlightened, such as:
 ## Recommended SDK and Unity Editor
 
 +	SDK Platform 27 \[*Android 8.1*]
-+	Unity 2018.3.7f1
++	Unity 2022.1.16f1
 
 > :bulb:\
 > A new branch was recently added to the project, which is intended to support devices with **Android 10** or higher.\
