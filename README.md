@@ -14,10 +14,6 @@ Some questions can be enlightened, such as:
 +	SDK Platform 27 \[*Android 8.1*]
 +	Unity 2022.1.16f1
 
-> :bulb:\
-> A new branch was recently added to the project, which is intended to support devices with **Android 10** or higher.\
-> This new branch was developed in **Unity 2021.2.6f1**: [Unity Android Sample | unity_2021_2_6 Branch](https://github.com/biosignalsplux/unity-android-sample/tree/unity_2021_2_6)
-
 ## Limitations
 
 +	**PLUX** devices from **BITalino** product line are not currently supported. 
