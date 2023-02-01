@@ -7,13 +7,15 @@ using UnityEngine.UI;
  * Class dedicated to control da behavior of the bar that is intended to graphically illustrate the
  * received values from the PLUX device.
  */
-public class BarScript : MonoBehaviour {
 
+public class BarScript : MonoBehaviour
+{
     // Internal instance of the BarScript class.
     public static BarScript Instance;
 
     // Class global variables.
     private float fillAmount;
+
     public Image bar;
     private int maxValue = -1;
 
@@ -23,7 +25,8 @@ public class BarScript : MonoBehaviour {
      * being always invoked before Start().</summary>
      * <see>https://docs.unity3d.com/ScriptReference/MonoBehaviour.Awake.html</see>
      */
-    void Awake()
+
+    private void Awake()
     {
         //Check if instance already exists
         if (Instance == null)
@@ -35,25 +38,23 @@ public class BarScript : MonoBehaviour {
      * Set of instruction responsible for controlling the fraction of the bar that should be filled
      * accordingly to the value under analysis.
      */
+
     public int Value
     {
         set
         {
             // Initializing the bar value.
-            if(value == -1)
+            if (value == -1)
             {
                 fillAmount = 0;
                 return;
             }
 
-            // Baseline removal.
-            int newValue = Mathf.Abs(value - 32767);
-
             // Dealing with out of bound values.
-            maxValue = newValue > maxValue ? newValue : maxValue;
+            maxValue = value > maxValue ? value : maxValue;
 
             // Define the new fillAmount value.
-            fillAmount = newValue * 1f/maxValue;
+            fillAmount = (maxValue - value) * 1f / maxValue;
         }
     }
 
@@ -61,26 +62,30 @@ public class BarScript : MonoBehaviour {
      * <summary>Unity callback that is invoked when the script is enabled (is only executed one time).</summary>
      * <see>https://docs.unity3d.com/ScriptReference/MonoBehaviour.Start.html</see>
      */
-    void Start () {
-		
-	}
+
+    private void Start()
+    {
+    }
 
     /**
      * <summary>Unity callback called once per frame.</summary>
      * <see>https://docs.unity3d.com/ScriptReference/MonoBehaviour.Update.html</see>
      */
-    void Update () {
+
+    private void Update()
+    {
         HandleBar();
-	}
+    }
 
     /**
      * <summary>Method responsible for setting the size of the bar parcel that should be filled (accordingly to the value
      * under analysis)</summary>
      */
+
     private void HandleBar()
     {
         // Update the bar only if the current value is different from the previous one.
-        if(fillAmount == bar.fillAmount)
+        if (fillAmount == bar.fillAmount)
         {
             return;
         }
